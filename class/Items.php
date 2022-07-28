@@ -38,12 +38,20 @@ class Items {
     }
 
     // set id for reading of data
-    public function setId($id) {
+    public function setId($id, $paginate, $getsearch) {
         $this->id = $id;
+        $this->paginate = $paginate;
+        $this->search = $getsearch;
     }
 
+    // read event (read by id, paginate, serach)
     public function read() {
         $id = $this->id;
+        $paginate = $this->paginate;
+        $search = $this->search;
+
+        // return [$id, $paginate];
+
 
         if($id == '0') {
             // without single id search
@@ -81,7 +89,9 @@ class Items {
                 return $data;
             }
 
-        } else {
+        }
+        
+        if($id != '0' && $paginate == null && $search == null){
 
             // for single search by id
             $getData = "SELECT * FROM `items` WHERE `id` = '$id' LIMIT 1";
@@ -120,6 +130,182 @@ class Items {
 
             }
         }
+
+
+        // if paginate is equal to 1
+        if($paginate == '1') {
+
+            $getData = "SELECT * FROM `items`";
+
+            $result_all = mysqli_query($this->conn, $getData);
+    
+            if($result_all) {
+
+                $list_item = [];
+
+                while ($row = mysqli_fetch_array($result_all, MYSQLI_ASSOC)) {
+    
+                    $name = $row["name"];
+                    $description = $row["description"];
+                    $price = $row["price"];
+                    $category_id = $row["category_id"];
+                    $created = $row['created'];
+        
+                    $total = new stdClass();
+        
+                    $total->name = $name;
+                    $total->description = $description;
+                    $total->price = $price;
+                    $total->category_id = $category_id;
+                    $total->creadted = $created;
+        
+        
+                    Array_push($list_item, $total);
+    
+                };
+
+                $data = $list_item;
+
+                return $data;
+            }
+        }
+        
+        if($paginate != '1'  && $id == null && $search == null){
+
+            $no_of_records_per_page = 5;
+            $offset = ($paginate - 1) * $no_of_records_per_page;
+
+            $total_pages_query = "SELECT count(*) FROM `items`";
+            $result = mysqli_query($this->conn, $total_pages_query);
+
+            // return[$offset, $no_of_records_per_page];
+            
+            if($result) {
+
+                $total_rows = mysqli_fetch_array($result)[0];
+
+                $total_pages = ceil($total_rows/ $no_of_records_per_page);
+
+                $another_query = "SELECT * FROM `items` LIMIT $offset, $no_of_records_per_page";
+
+                $another_result = mysqli_query($this->conn, $another_query);
+
+                if($another_result) {
+
+                    $list_item = [];
+
+
+                    while($row = mysqli_fetch_array($another_result, MYSQLI_ASSOC)) {
+
+                        // return $another_result;
+
+                        $name = $row["name"];
+                        $description = $row["description"];
+                        $price = $row["price"];
+                        $category_id = $row["category_id"];
+                        $created = $row['created'];
+            
+                        $total = new stdClass();
+            
+                        $total->name = $name;
+                        $total->description = $description;
+                        $total->price = $price;
+                        $total->category_id = $category_id;
+                        $total->creadted = $created;
+            
+            
+                        Array_push($list_item, $total);
+
+                    }
+
+                    $data = $list_item;
+
+                    return $data;
+                }
+                
+            }
+        }
+
+
+        // search for keywords
+
+        if($search ==  '0') {
+             // without single id search
+             $getData = "SELECT * FROM `items`";
+
+             $result_all = mysqli_query($this->conn, $getData);
+     
+            if($result_all) {
+ 
+                $list_item = [];
+ 
+                while ($row = mysqli_fetch_array($result_all, MYSQLI_ASSOC)) {
+     
+                    $name = $row["name"];
+                    $description = $row["description"];
+                    $price = $row["price"];
+                    $category_id = $row["category_id"];
+                    $created = $row['created'];
+        
+                    $total = new stdClass();
+        
+                    $total->name = $name;
+                    $total->description = $description;
+                    $total->price = $price;
+                    $total->category_id = $category_id;
+                    $total->creadted = $created;
+        
+        
+                    Array_push($list_item, $total);
+     
+                };
+ 
+                 $data = $list_item;
+ 
+                return $data;
+            }
+ 
+        }
+
+        if($search != '0'  && $id == null && $paginate == null) {
+
+            $getData = "SELECT * FROM `items` WHERE `description` LIKE '%$search%'";
+
+            $result_all = mysqli_query($this->conn, $getData);
+
+            if($result_all) {
+
+                $list_item = [];
+
+                while ($row = mysqli_fetch_array($result_all, MYSQLI_ASSOC)) {
+    
+                    $name = $row["name"];
+                    $description = $row["description"];
+                    $price = $row["price"];
+                    $category_id = $row["category_id"];
+                    $created = $row['created'];
+        
+                    $total = new stdClass();
+        
+                    $total->name = $name;
+                    $total->description = $description;
+                    $total->price = $price;
+                    $total->category_id = $category_id;
+                    $total->creadted = $created;
+        
+        
+                    Array_push($list_item, $total);
+    
+                };
+
+                $data = $list_item;
+
+                return $data;
+
+            }
+        }
     }
+
 }
+
 ?>

@@ -17,13 +17,41 @@ $items = new Items($db);
 
 $checkId = (isset($_GET['id']) && $_GET['id']) ? $_GET['id'] : '0';
 
-$items->setId($checkId);
+$getpaginate = (isset($_GET['paginate']) && $_GET['paginate']) ? $_GET['paginate'] : 1;
+
+$getsearch = (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : 0;
+
+if($checkId == '0' && $getpaginate == '1' && $getsearch == '0') {
+
+    $items->setId($checkId, $getpaginate, $getsearch);
+
+}
+
+if($checkId == '0' && $getpaginate !='1' && $getsearch == '0') {
+
+    $items->setId(null, $getpaginate, null);
+
+}
+
+if($checkId != '0' && $getpaginate =='1' && $getsearch == '0') {
+
+    $items->setId($checkId, null, null);
+
+}
+
+if($checkId == '0' && $getpaginate =='1' && $getsearch != '0') {
+
+    $items->setId(null, null, $getsearch);
+
+}
 
 if($items->read()) {
 
     $data = $items->read();
     http_response_code(200);     
-    echo json_encode($data);
+    // echo json_encode($data);
+
+    print_r($data);
 
 } else {   
 
@@ -32,6 +60,13 @@ if($items->read()) {
         array("message" => "No item found.")
     );
 }
+
+
+
+
+// echo $checkId;
+
+// echo $getpaginate;
 
 
 
