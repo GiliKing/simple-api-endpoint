@@ -50,7 +50,7 @@ if($items->read()) {
 
     $data = $items->read();   
     http_response_code(200);    
-    echo json_encode($data);
+    return json_encode($data);
     
 } else {   
 
