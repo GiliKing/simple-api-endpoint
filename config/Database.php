@@ -2,10 +2,10 @@
 <?php
 
 class Database {
-    private $_host  = 'localhost';
-    private $_user  = 'root';
-    private $_password   = "";
-    private $_database  = "money";
+    private $_host  = 'us-cdbr-east-06.cleardb.net';
+    private $_user  = 'b1672a420eb63d';
+    private $_password   = "a6e5c671";
+    private $_database  = "heroku_709f95d041c95ca";
 
     public function getConnection(){		
 		// $conn = new mysqli($this->_host, $this->_user, $this->_password, $this->_database);
